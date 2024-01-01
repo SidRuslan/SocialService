@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: javaproteam42/social-service:1.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: DB_HOST
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: DB_USERNAME
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: DB_PASSWORD
+          - name: BOOTSTRAP-SERVERS
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: BOOTSTRAP-SERVERS
+          - name: GROUP-ID
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: GROUP-ID
+          - name: MAIL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: MAIL_HOST
+          - name: MAIL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: MAIL_USERNAME
+          - name: MAIL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: MAIL_PASSWORD
+          - name: KAFKA_LOGGER
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: KAFKA_LOGGER
+          - name: ROOT_LOGGER
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: ROOT_LOGGER
+          - name: PROJECT_LOGGER
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: PROJECT_LOGGER
+          - name: PROD_HOST
+            valueFrom:
+              secretKeyRef:
+                name: backend-secret
+                key: PROD_HOST
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: NodePort
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30100
